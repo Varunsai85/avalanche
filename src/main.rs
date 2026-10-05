@@ -1,27 +1,32 @@
+mod error;
+
 use std::{path::PathBuf, process};
 
 use clap::{Parser, Subcommand};
+
+use crate::error::AvalancheError;
 fn main() {
     let cli = Cli::parse();
 
     if let Err(e) = run(&cli) {
-        eprintln!("Application error: {e}");
-        process::exit(1);
+        eprintln!("error: {e}");
+        process::exit(e.exit_code());
     }
 }
 
-fn run(cli: &Cli) -> Result<(), String> {
+fn run(cli: &Cli) -> Result<(), AvalancheError> {
     match &cli.command {
         Command::Convert { input, output } => {
             if !input.exists() {
-                return Err(format!("input file '{}' not found", input.display()));
+                return Err(AvalancheError::FileNotFound {
+                    path: input.clone(),
+                });
             }
 
             let Some(ext) = output.extension().and_then(|e| e.to_str()) else {
-                return Err(format!(
-                    "output file '{}' has no file extension",
-                    output.display()
-                ));
+                return Err(AvalancheError::NoExtension {
+                    path: output.clone(),
+                });
             };
 
             let ext = ext.to_lowercase();
@@ -34,10 +39,10 @@ fn run(cli: &Cli) -> Result<(), String> {
 
         Command::Info { file } => {
             if !file.exists() {
-                return Err(format!("file '{}' not found", file.display()));
+                return Err(AvalancheError::FileNotFound { path: file.clone() });
             }
 
-            println!("The file information: {}", file.display());
+            println!("File information: {}", file.display());
         }
     }
     Ok(())
