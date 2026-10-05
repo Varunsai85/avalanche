@@ -1,8 +1,11 @@
 pub mod cli;
 pub mod error;
+pub mod format;
 
 use cli::{Cli, Command};
 use error::AvalancheError;
+
+use crate::format::Format;
 
 pub fn run(cli: &Cli) -> Result<(), AvalancheError> {
     match &cli.command {
@@ -19,11 +22,13 @@ pub fn run(cli: &Cli) -> Result<(), AvalancheError> {
                 });
             };
 
-            let ext = ext.to_lowercase();
+            let format = Format::from_extension(ext)?;
             println!(
-                "convert {} -> {} (format: {ext})",
+                "convert {} -> {} ({:?}, {:?})",
                 input.display(),
-                output.display()
+                output.display(),
+                format,
+                format.kind()
             );
         }
 
