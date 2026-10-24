@@ -5,8 +5,12 @@ pub enum Format {
     Mp4,
     Mov,
     Mkv,
+    Avi,
+    Webm,
+    Flv,
     Mp3,
     Wav,
+    M4a,
     Png,
     Jpg,
     Webp,
@@ -26,8 +30,12 @@ impl Format {
             "mp4" => Ok(Format::Mp4),
             "mov" => Ok(Format::Mov),
             "mkv" => Ok(Format::Mkv),
+            "avi" => Ok(Format::Avi),
+            "webm" => Ok(Format::Webm),
+            "flv" => Ok(Format::Flv),
             "mp3" => Ok(Format::Mp3),
             "wav" => Ok(Format::Wav),
+            "m4a" => Ok(Format::M4a),
             "png" => Ok(Format::Png),
             "jpg" | "jpeg" => Ok(Format::Jpg),
             "webp" => Ok(Format::Webp),
@@ -40,8 +48,10 @@ impl Format {
 
     pub fn kind(&self) -> MediaKind {
         match self {
-            Format::Mov | Format::Mkv | Format::Mp4 => MediaKind::Video,
-            Format::Mp3 | Format::Wav => MediaKind::Audio,
+            Format::Mov | Format::Mkv | Format::Mp4 | Format::Avi | Format::Webm | Format::Flv => {
+                MediaKind::Video
+            }
+            Format::Mp3 | Format::Wav | Format::M4a => MediaKind::Audio,
             Format::Png | Format::Jpg | Format::Avif | Format::Webp => MediaKind::Image,
         }
     }
@@ -57,8 +67,12 @@ mod tests {
             ("mp4", Format::Mp4),
             ("mov", Format::Mov),
             ("mkv", Format::Mkv),
+            ("avi", Format::Avi),
+            ("webm", Format::Webm),
+            ("flv", Format::Flv),
             ("mp3", Format::Mp3),
             ("wav", Format::Wav),
+            ("m4a", Format::M4a),
             ("png", Format::Png),
             ("jpeg", Format::Jpg),
             ("jpg", Format::Jpg),
@@ -93,8 +107,12 @@ mod tests {
             (Format::Mov, MediaKind::Video),
             (Format::Mkv, MediaKind::Video),
             (Format::Mp4, MediaKind::Video),
+            (Format::Avi, MediaKind::Video),
+            (Format::Webm, MediaKind::Video),
+            (Format::Flv, MediaKind::Video),
             (Format::Mp3, MediaKind::Audio),
             (Format::Wav, MediaKind::Audio),
+            (Format::M4a, MediaKind::Audio),
             (Format::Png, MediaKind::Image),
             (Format::Jpg, MediaKind::Image),
             (Format::Webp, MediaKind::Image),
