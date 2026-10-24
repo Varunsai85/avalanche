@@ -1,5 +1,6 @@
 pub mod cli;
 pub mod error;
+pub mod ffmpeg;
 pub mod format;
 
 use cli::{Cli, Command};
@@ -15,7 +16,6 @@ pub fn run(cli: &Cli) -> Result<(), AvalancheError> {
                     path: input.clone(),
                 });
             }
-
             let Some(ext) = output.extension().and_then(|e| e.to_str()) else {
                 return Err(AvalancheError::NoExtension {
                     path: output.clone(),
@@ -23,6 +23,7 @@ pub fn run(cli: &Cli) -> Result<(), AvalancheError> {
             };
 
             let format = Format::from_extension(ext)?;
+            ffmpeg::check_installed()?;
             println!(
                 "convert {} -> {} ({:?}, {:?})",
                 input.display(),

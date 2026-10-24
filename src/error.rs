@@ -10,6 +10,12 @@ pub enum AvalancheError {
 
     /// Unsupported output format
     UnsupportedFormat { ext: String },
+
+    /// ffmpeg is not found
+    FfmpegNotFound,
+
+    /// ffmpeg exists but couldn't be started (e.g. persmissions)
+    FfmpegLaunchFailed { reason: String },
 }
 
 impl fmt::Display for AvalancheError {
@@ -22,7 +28,16 @@ impl fmt::Display for AvalancheError {
                 write!(f, "output file '{}' has no file extension", path.display())
             }
             AvalancheError::UnsupportedFormat { ext } => {
-                write!(f, "unsupported file extension '{}'", ext)
+                write!(f, "unsupported file extension: '{}'", ext)
+            }
+            AvalancheError::FfmpegNotFound => {
+                write!(
+                    f,
+                    "ffmpeg not found - install it with `brew install ffmpeg`"
+                )
+            }
+            AvalancheError::FfmpegLaunchFailed { reason } => {
+                write!(f, "ffmpeg failed to launch: '{}'", reason)
             }
         }
     }
@@ -36,6 +51,8 @@ impl AvalancheError {
             AvalancheError::FileNotFound { .. } => 66,
             AvalancheError::NoExtension { .. } => 64,
             AvalancheError::UnsupportedFormat { .. } => 65,
+            AvalancheError::FfmpegNotFound => 69,
+            AvalancheError::FfmpegLaunchFailed { .. } => 70,
         }
     }
 }
