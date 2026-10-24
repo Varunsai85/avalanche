@@ -5,7 +5,7 @@ pub enum AvalancheError {
     /// A file the user gave doesn't exist
     FileNotFound { path: PathBuf },
 
-    /// The outout already exists
+    /// The output already exists
     OutputAlreadyExists { path: PathBuf },
 
     /// The output path has no extension, so no format can be chosen
@@ -17,7 +17,7 @@ pub enum AvalancheError {
     /// ffmpeg is not found
     FfmpegNotFound,
 
-    /// ffmpeg exists but couldn't be started (e.g. persmissions)
+    /// ffmpeg exists but couldn't be started (e.g. permissions)
     FfmpegLaunchFailed { reason: String },
 
     /// ffmpeg unable to convert the media
@@ -64,8 +64,8 @@ impl AvalancheError {
             AvalancheError::NoExtension { .. } => 64,
             AvalancheError::UnsupportedFormat { .. } => 65,
             AvalancheError::FfmpegNotFound => 69,
-            AvalancheError::FfmpegLaunchFailed { .. } => 70,
-            AvalancheError::FfmpegFailed { .. } => 71,
+            AvalancheError::FfmpegLaunchFailed { .. } => 71,
+            AvalancheError::FfmpegFailed { .. } => 70,
             AvalancheError::OutputAlreadyExists { .. } => 73,
         }
     }
