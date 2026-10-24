@@ -5,6 +5,9 @@ pub enum AvalancheError {
     /// A file the user gave doesn't exist
     FileNotFound { path: PathBuf },
 
+    /// The outout already exists
+    OutputAlreadyExists { path: PathBuf },
+
     /// The output path has no extension, so no format can be chosen
     NoExtension { path: PathBuf },
 
@@ -16,6 +19,9 @@ pub enum AvalancheError {
 
     /// ffmpeg exists but couldn't be started (e.g. persmissions)
     FfmpegLaunchFailed { reason: String },
+
+    /// ffmpeg unable to convert the media
+    FfmpegFailed { stderr: String },
 }
 
 impl fmt::Display for AvalancheError {
@@ -24,8 +30,11 @@ impl fmt::Display for AvalancheError {
             AvalancheError::FileNotFound { path } => {
                 write!(f, "file '{}' not found", path.display())
             }
+            AvalancheError::OutputAlreadyExists { path } => {
+                write!(f, "output file '{}' already exists", path.display())
+            }
             AvalancheError::NoExtension { path } => {
-                write!(f, "output file '{}' has no file extension", path.display())
+                write!(f, "file '{}' has no file extension", path.display())
             }
             AvalancheError::UnsupportedFormat { ext } => {
                 write!(f, "unsupported file extension: '{}'", ext)
@@ -38,6 +47,9 @@ impl fmt::Display for AvalancheError {
             }
             AvalancheError::FfmpegLaunchFailed { reason } => {
                 write!(f, "ffmpeg failed to launch: '{}'", reason)
+            }
+            AvalancheError::FfmpegFailed { stderr } => {
+                write!(f, "ffmpeg unable to convert the media: '{}'", stderr)
             }
         }
     }
@@ -53,6 +65,8 @@ impl AvalancheError {
             AvalancheError::UnsupportedFormat { .. } => 65,
             AvalancheError::FfmpegNotFound => 69,
             AvalancheError::FfmpegLaunchFailed { .. } => 70,
+            AvalancheError::FfmpegFailed { .. } => 71,
+            AvalancheError::OutputAlreadyExists { .. } => 73,
         }
     }
 }
