@@ -16,12 +16,22 @@ pub fn run(cli: Cli) -> Result<(), AvalancheError> {
             if !input.exists() {
                 return Err(AvalancheError::FileNotFound { path: input });
             }
-            check_extension(&input)?;
+
+            let input_format = check_extension(&input)?;
+
             if output.exists() {
                 return Err(AvalancheError::OutputAlreadyExists { path: output });
             }
 
-            let format = check_extension(&output)?;
+            let output_format = check_extension(&output)?;
+
+            if !input_format.kind().can_convert_to(&output_format.kind()) {
+                return Err(AvalancheError::UnsupportedConversion {
+                    from: input_format,
+                    to: output_format,
+                });
+            }
+
             ffmpeg::check_installed()?;
 
             let args = ffmpeg::build_args(&input, &output);
@@ -30,8 +40,8 @@ pub fn run(cli: Cli) -> Result<(), AvalancheError> {
                 "converted: {} -> {} ({},{})",
                 input.display(),
                 output.display(),
-                format,
-                format.kind()
+                output_format,
+                output_format.kind()
             );
         }
 

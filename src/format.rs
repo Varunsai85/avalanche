@@ -59,6 +59,18 @@ impl Format {
     }
 }
 
+impl MediaKind {
+    pub fn can_convert_to(&self, target: &MediaKind) -> bool {
+        matches!(
+            (self, target),
+            (MediaKind::Video, MediaKind::Video)
+                | (MediaKind::Video, MediaKind::Audio)
+                | (MediaKind::Audio, MediaKind::Audio)
+                | (MediaKind::Image, MediaKind::Image)
+        )
+    }
+}
+
 impl fmt::Display for Format {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
@@ -158,5 +170,13 @@ mod tests {
         for (format, expected) in cases {
             assert_eq!(expected, format.kind(), "format {format:?}");
         }
+    }
+
+    #[test]
+    fn unsupported_conversion() {
+        assert_eq!(
+            false,
+            Format::Mp3.kind().can_convert_to(&Format::Mov.kind())
+        )
     }
 }

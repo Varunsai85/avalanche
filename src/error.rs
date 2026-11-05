@@ -1,5 +1,7 @@
 use std::{error::Error, fmt, path::PathBuf};
 
+use crate::format::Format;
+
 #[derive(Debug, PartialEq)]
 pub enum AvalancheError {
     /// A file the user gave doesn't exist
@@ -22,6 +24,9 @@ pub enum AvalancheError {
 
     /// ffmpeg unable to convert the media
     FfmpegFailed { stderr: String },
+
+    /// cannot establish conversion between these two files
+    UnsupportedConversion { from: Format, to: Format },
 }
 
 impl fmt::Display for AvalancheError {
@@ -51,6 +56,14 @@ impl fmt::Display for AvalancheError {
             AvalancheError::FfmpegFailed { stderr } => {
                 write!(f, "ffmpeg unable to convert the media: '{}'", stderr)
             }
+            AvalancheError::UnsupportedConversion { from, to } => {
+                write!(
+                    f,
+                    "cannot convert {from}({}) to {to}({})",
+                    from.kind(),
+                    to.kind()
+                )
+            }
         }
     }
 }
@@ -67,6 +80,7 @@ impl AvalancheError {
             AvalancheError::FfmpegLaunchFailed { .. } => 71,
             AvalancheError::FfmpegFailed { .. } => 70,
             AvalancheError::OutputAlreadyExists { .. } => 73,
+            AvalancheError::UnsupportedConversion { .. } => 74,
         }
     }
 }
