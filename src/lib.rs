@@ -8,7 +8,7 @@ use std::path::Path;
 use cli::{Cli, Command};
 use error::AvalancheError;
 
-use crate::{ffmpeg::convert_media, format::Format};
+use crate::format::Format;
 
 pub fn run(cli: Cli) -> Result<(), AvalancheError> {
     match cli.command {
@@ -24,11 +24,10 @@ pub fn run(cli: Cli) -> Result<(), AvalancheError> {
             let format = check_extension(&output)?;
             ffmpeg::check_installed()?;
 
-            let args = vec![&input, &output];
-            convert_media(args)?;
-
+            let args = ffmpeg::build_args(&input, &output);
+            ffmpeg::run_ffmpeg(&args)?;
             println!(
-                "convert {} -> {} ({:?}, {:?})",
+                "converted: {} -> {} ({:?},{:?})",
                 input.display(),
                 output.display(),
                 format,
