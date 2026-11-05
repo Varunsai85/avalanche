@@ -8,7 +8,7 @@ pub enum AvalancheError {
     /// The output already exists
     OutputAlreadyExists { path: PathBuf },
 
-    /// The output path has no extension, so no format can be chosen
+    /// The file path has no extension, so no format can be chosen
     NoExtension { path: PathBuf },
 
     /// Unsupported output format
