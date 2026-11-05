@@ -82,7 +82,7 @@ impl fmt::Display for Format {
             Format::Mkv => "mkv",
             Format::Mov => "mov",
             Format::Mp3 => "mp3",
-            Format::Mp4 => "mp3",
+            Format::Mp4 => "mp4",
             Format::Png => "png",
             Format::Wav => "wav",
             Format::Webm => "webm",
@@ -174,9 +174,6 @@ mod tests {
 
     #[test]
     fn unsupported_conversion() {
-        assert_eq!(
-            false,
-            Format::Mp3.kind().can_convert_to(&Format::Mov.kind())
-        )
+        assert!(!Format::Mp3.kind().can_convert_to(&Format::Mov.kind()))
     }
 }

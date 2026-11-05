@@ -37,7 +37,7 @@ pub fn run(cli: Cli) -> Result<(), AvalancheError> {
             let args = ffmpeg::build_args(&input, &output);
             ffmpeg::run_ffmpeg(&args)?;
             println!(
-                "converted: {} -> {} ({},{})",
+                "converted: {} -> {} ({}, {})",
                 input.display(),
                 output.display(),
                 output_format,
@@ -70,10 +70,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn check_formats() {
+    fn unsupported_extension_error() {
         let path = Path::new("Cargo.toml");
         assert_eq!(
-            check_extension(&path),
+            check_extension(path),
             Err(AvalancheError::UnsupportedFormat {
                 ext: "toml".to_string()
             })
