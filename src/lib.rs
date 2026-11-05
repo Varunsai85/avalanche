@@ -27,7 +27,7 @@ pub fn run(cli: Cli) -> Result<(), AvalancheError> {
             let args = ffmpeg::build_args(&input, &output);
             ffmpeg::run_ffmpeg(&args)?;
             println!(
-                "converted: {} -> {} ({:?},{:?})",
+                "converted: {} -> {} ({},{})",
                 input.display(),
                 output.display(),
                 format,
@@ -58,11 +58,10 @@ fn check_extension(path: &Path) -> Result<Format, AvalancheError> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
 
     #[test]
     fn check_formats() {
-        let path = PathBuf::from("Cargo.toml");
+        let path = Path::new("Cargo.toml");
         assert_eq!(
             check_extension(&path),
             Err(AvalancheError::UnsupportedFormat {

@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::error::AvalancheError;
 
 #[derive(Debug, PartialEq)]
@@ -54,6 +56,40 @@ impl Format {
             Format::Mp3 | Format::Wav | Format::M4a => MediaKind::Audio,
             Format::Png | Format::Jpg | Format::Avif | Format::Webp => MediaKind::Image,
         }
+    }
+}
+
+impl fmt::Display for Format {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            Format::Avi => "avi",
+            Format::Avif => "avif",
+            Format::Flv => "flv",
+            Format::Jpg => "jpg",
+            Format::M4a => "m4a",
+            Format::Mkv => "mkv",
+            Format::Mov => "mov",
+            Format::Mp3 => "mp3",
+            Format::Mp4 => "mp3",
+            Format::Png => "png",
+            Format::Wav => "wav",
+            Format::Webm => "webm",
+            Format::Webp => "webp",
+        };
+
+        write!(f, "{name}")
+    }
+}
+
+impl fmt::Display for MediaKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            MediaKind::Audio => "audio",
+            MediaKind::Image => "image",
+            MediaKind::Video => "video",
+        };
+
+        write!(f, "{name}")
     }
 }
 
