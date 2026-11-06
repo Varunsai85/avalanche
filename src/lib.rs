@@ -50,7 +50,8 @@ pub fn run(cli: Cli) -> Result<(), AvalancheError> {
                 return Err(AvalancheError::FileNotFound { path: file });
             }
 
-            println!("File information: {}", file.display());
+            let result = ffmpeg::run_ffprobe(&file)?;
+            println!("File information: {result}");
         }
     }
     Ok(())

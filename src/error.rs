@@ -27,6 +27,9 @@ pub enum AvalancheError {
 
     /// cannot establish conversion between these two files
     UnsupportedConversion { from: Format, to: Format },
+
+    /// ffprobe unable to fetch the media info
+    FfprobeFailed { stderr: String },
 }
 
 impl fmt::Display for AvalancheError {
@@ -42,7 +45,7 @@ impl fmt::Display for AvalancheError {
                 write!(f, "file '{}' has no file extension", path.display())
             }
             AvalancheError::UnsupportedFormat { ext } => {
-                write!(f, "unsupported file extension: '{}'", ext)
+                write!(f, "unsupported file extension: '{ext}'")
             }
             AvalancheError::FfmpegNotFound => {
                 write!(
@@ -51,10 +54,10 @@ impl fmt::Display for AvalancheError {
                 )
             }
             AvalancheError::FfmpegLaunchFailed { reason } => {
-                write!(f, "ffmpeg failed to launch: '{}'", reason)
+                write!(f, "ffmpeg failed to launch: '{reason}'")
             }
             AvalancheError::FfmpegFailed { stderr } => {
-                write!(f, "ffmpeg unable to convert the media: '{}'", stderr)
+                write!(f, "unable to convert the media: '{stderr}'")
             }
             AvalancheError::UnsupportedConversion { from, to } => {
                 write!(
@@ -63,6 +66,9 @@ impl fmt::Display for AvalancheError {
                     from.kind(),
                     to.kind()
                 )
+            }
+            AvalancheError::FfprobeFailed { stderr } => {
+                write!(f, "unable to fetch the media info: '{stderr}'")
             }
         }
     }
@@ -81,6 +87,7 @@ impl AvalancheError {
             AvalancheError::FfmpegFailed { .. } => 70,
             AvalancheError::OutputAlreadyExists { .. } => 73,
             AvalancheError::UnsupportedConversion { .. } => 74,
+            AvalancheError::FfprobeFailed { .. } => 75,
         }
     }
 }

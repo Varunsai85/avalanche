@@ -35,6 +35,29 @@ pub fn run_ffmpeg(args: &[String]) -> Result<(), AvalancheError> {
     Ok(())
 }
 
+pub fn run_ffprobe(file: &Path) -> Result<String, AvalancheError> {
+    let args = [
+        "-v",
+        "error",
+        "-show_entries",
+        "format=duration,bit_rate,format_name:stream=codec_type,codec_name,width,height",
+        "-of",
+        "flat",
+    ];
+    let result = Command::new("ffprobe")
+        .args(args)
+        .arg(file)
+        .output()
+        .map_err(launch_error)?;
+    if !result.status.success() {
+        let stderr = String::from_utf8_lossy(&result.stderr);
+        let last_line = stderr.lines().last().unwrap_or("").to_string();
+        return Err(AvalancheError::FfprobeFailed { stderr: last_line });
+    }
+    let output = String::from_utf8_lossy(&result.stdout);
+    Ok(output.to_string())
+}
+
 fn launch_error(e: io::Error) -> AvalancheError {
     match e.kind() {
         ErrorKind::NotFound => AvalancheError::FfmpegNotFound,
