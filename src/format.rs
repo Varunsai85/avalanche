@@ -174,6 +174,16 @@ mod tests {
 
     #[test]
     fn unsupported_conversion() {
-        assert!(!Format::Mp3.kind().can_convert_to(&Format::Mov.kind()))
+        let cases = [
+            (Format::Mov, Format::Png),
+            (Format::Png, Format::Mp3),
+            (Format::Jpg, Format::Mkv),
+            (Format::Mp3, Format::Webp),
+            (Format::Wav, Format::Mkv),
+        ];
+
+        for (input, output) in cases {
+            assert!(!input.kind().can_convert_to(&output.kind()))
+        }
     }
 }
