@@ -2,6 +2,7 @@ pub mod cli;
 pub mod error;
 pub mod ffmpeg;
 pub mod format;
+pub mod probe;
 
 use std::path::Path;
 
