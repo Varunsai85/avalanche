@@ -9,7 +9,7 @@ use std::path::Path;
 use cli::{Cli, Command};
 use error::AvalancheError;
 
-use crate::format::Format;
+use crate::{format::Format, probe::parse_media_info};
 
 pub fn run(cli: Cli) -> Result<(), AvalancheError> {
     match cli.command {
@@ -52,7 +52,8 @@ pub fn run(cli: Cli) -> Result<(), AvalancheError> {
             }
 
             let result = ffmpeg::run_ffprobe(&file)?;
-            println!("File information: {result}");
+            let media_info = parse_media_info(&result);
+            println!("File information: \n{}", media_info);
         }
     }
     Ok(())

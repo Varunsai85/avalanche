@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Debug, Default, PartialEq)]
 pub struct StreamInfo {
     kind: String,
@@ -59,6 +61,52 @@ pub fn parse_media_info(output: &str) -> MediaInfo {
     media_info
 }
 
+impl fmt::Display for MediaInfo {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self.container {
+            Some(container) => write!(f, "container: {container}")?,
+            None => write!(f, "container: N/A")?,
+        }
+
+        match self.duration {
+            Some(duration) => {
+                let total_seconds = duration as u32;
+                let hrs = total_seconds / 3600;
+                let mins = (total_seconds % 3600) / 60;
+                let secs = total_seconds % 60;
+                write!(f, "\nduration: {hrs:02}:{mins:02}:{secs:02}")?;
+            }
+            None => write!(f, "\nduration: N/A")?,
+        }
+
+        match self.bit_rate {
+            Some(bit_rate) => write!(f, "\nbitrate: {} kb/s", bit_rate / 1000)?,
+            None => write!(f, "\nbitrate: N/A")?,
+        }
+
+        write!(f, "\nstreams:")?;
+        for stream in &self.streams {
+            write!(f, "\n {stream}")?;
+        }
+
+        Ok(())
+    }
+}
+
+impl fmt::Display for StreamInfo {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}:", self.kind)?;
+        write!(f, "\n  codec: {}", self.codec)?;
+
+        if let (Some(width), Some(height)) = (self.width, self.height) {
+            write!(f, "\n  width: {width}")?;
+            write!(f, "\n  height: {height}")?;
+        }
+
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -107,9 +155,39 @@ format.bit_rate="N/A""#;
     }
 
     #[test]
-    fn parsing_ffprobe_png_result(){
+    fn parsing_ffprobe_png_result() {
         let info = parse_media_info(PNG_OUTPUT);
         assert_eq!(None, info.duration);
         assert_eq!(Some(String::from("png_pipe")), info.container);
+    }
+
+    #[test]
+    fn displaying_mp4_media_info() {
+        let expected = "\
+container: mov,mp4,m4a,3gp,3g2,mj2
+duration: 00:00:02
+bitrate: 139 kb/s
+streams:
+ video:
+  codec: h264
+  width: 640
+  height: 360
+ audio:
+  codec: aac";
+        assert_eq!(expected, parse_media_info(MP4_OUTPUT).to_string())
+    }
+
+    #[test]
+    fn displaying_png_media_info() {
+        let expected = "\
+container: png_pipe
+duration: N/A
+bitrate: N/A
+streams:
+ video:
+  codec: png
+  width: 640
+  height: 360";
+        assert_eq!(expected, parse_media_info(PNG_OUTPUT).to_string())
     }
 }
